@@ -1,0 +1,188 @@
+Sub subPrzeniesienieStronaWynikowa()
+
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+    
+answer = MsgBox("Czy przenosimy dane z zakladki 'Strona Wynikowa'?", vbQuestion + vbYesNo, "Wezly cieplne")
+
+If answer = xlNo Then
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    Exit Sub
+End If
+
+last_row_shData = shData.Range("A" & shData.Rows.Count).End(xlUp).Row
+last_row_shTele = shTele.Range("A" & shTele.Rows.Count).End(xlUp).Row + 1
+last_row_shRejon1 = shRejon1.Range("A" & shRejon1.Rows.Count).End(xlUp).Row + 1
+last_row_shRejon2 = shRejon2.Range("A" & shRejon2.Rows.Count).End(xlUp).Row + 1
+
+    For i = 2 To last_row_shData
+    If Len(shData.Range("I" & i).Value) <> 0 Then
+        If shData.Range("H" & i).Value = "advance" And Len(shData.Range("E" & i).Value) <> 0 Then
+            sNrPlatnika = shData.Range("E" & i).Value
+            On Error Resume Next
+            j = shTele.Range("E:E").Find(What:=sNrPlatnika, LookIn:=xlValues, LookAt:=xlWhole).Row
+            If Err.Number <> 0 Then
+                shData.Range("A" & i & ":I" & i).Copy shTele.Range("A" & last_row_shTele)
+                last_row_shTele = last_row_shTele + 1
+            End If
+            On Error GoTo 0
+        Else
+            If shData.Range("F" & i).Value = "Rejon 1" And Len(shData.Range("E" & i).Value) <> 0 Then
+                sNrPlatnika = shData.Range("E" & i).Value
+                On Error Resume Next
+                j = shRejon1.Range("E:E").Find(What:=sNrPlatnika, LookIn:=xlValues, LookAt:=xlWhole).Row
+                If Err.Number <> 0 Then
+                    shData.Range("A" & i & ":I" & i).Copy shRejon1.Range("A" & last_row_shRejon1)
+                    last_row_shRejon1 = last_row_shRejon1 + 1
+                End If
+                On Error GoTo 0
+            End If
+            If shData.Range("F" & i).Value = "Rejon 2" And Len(shData.Range("E" & i).Value) <> 0 Then
+                sNrPlatnika = shData.Range("E" & i).Value
+                On Error Resume Next
+                j = shRejon2.Range("E:E").Find(What:=sNrPlatnika, LookIn:=xlValues, LookAt:=xlWhole).Row
+                If Err.Number <> 0 Then
+                    shData.Range("A" & i & ":I" & i).Copy shRejon2.Range("A" & last_row_shRejon2)
+                    last_row_shRejon2 = last_row_shRejon2 + 1
+                End If
+                On Error GoTo 0
+            End If
+        End If
+    End If
+    
+Next i
+
+MsgBox "Dane przeniesione", vbInformation, "Wezly cieplne"
+        
+Application.DisplayAlerts = True
+Application.ScreenUpdating = True
+
+End Sub
+
+Sub subPrzeniesienieTelemetria()
+
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+    
+answer = MsgBox("Czy przenosimy dane z zakladki 'Telemtria'?", vbQuestion + vbYesNo, "Wezly cieplne")
+
+If answer = xlNo Then
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    Exit Sub
+End If
+
+last_row_shData = shData.Range("A" & shData.Rows.Count).End(xlUp).Row
+last_row_shTele = shTele.Range("A" & shTele.Rows.Count).End(xlUp).Row
+
+    For i = last_row_shTele To 2 Step -1
+        If Len(shTele.Range("J" & i).Value) <> 0 Then
+                sNrPlatnika = shTele.Range("E" & i).Value
+                sKomentarz = "Brakuje platnika o numerze:"
+                On Error Resume Next
+                j = shData.Range("E:E").Find(What:=sNrPlatnika, LookIn:=xlValues, LookAt:=xlWhole).Row
+                    If Err.Number <> 0 Then
+                        sKomentarz2 = sKomentarz2 & Chr(10) & sNrPlatnika
+                        shTele.Range("J" & i).Interior.Color = vbRed
+                    Else
+                        shData.Range("J" & j).Value = shTele.Range("J" & i).Value
+                        shTele.Range("J" & i).EntireRow.Delete
+                    End If
+                On Error GoTo 0
+        End If
+     Next i
+
+MsgBox "Dane przeniesione", vbInformation, "Wezly cieplne"
+
+If Len(sKomentarz2) <> 0 Then
+    MsgBox sKomentarz & Chr(10) & sKomentarz2, vbInformation, "Wezly cieplne"
+End If
+
+Application.DisplayAlerts = True
+Application.ScreenUpdating = True
+
+End Sub
+
+Sub subPrzeniesienieRejon1()
+
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+    
+answer = MsgBox("Czy przenosimy dane z zakladki 'Rejon1'?", vbQuestion + vbYesNo, "Wezly cieplne")
+
+If answer = xlNo Then
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    Exit Sub
+End If
+
+last_row_shData = shData.Range("A" & shData.Rows.Count).End(xlUp).Row
+last_row_shRejon1 = shRejon1.Range("A" & shRejon1.Rows.Count).End(xlUp).Row
+
+
+    For i = 2 To last_row_shRejon1
+        If Len(shRejon1.Range("J" & i).Value) <> 0 Then
+                sNrPlatnika = shRejon1.Range("E" & i).Value
+                sKomentarz = "Brakuje platnika o numerze:"
+                On Error Resume Next
+                j = shData.Range("E:E").Find(What:=sNrPlatnika, LookIn:=xlValues, LookAt:=xlWhole).Row
+                    If Err.Number <> 0 Then
+                        sKomentarz2 = sKomentarz2 & Chr(10) & sNrPlatnika
+                        shRejon1.Range("J" & i).Interior.Color = vbRed
+                    Else
+                        shData.Range("J" & j).Value = shRejon1.Range("J" & i).Value
+                        shRejon1.Range("J" & i).Interior.Color = vbGreen
+                    End If
+                On Error GoTo 0
+         End If
+     Next i
+
+MsgBox "Dane przeniesione", vbInformation, "Wezly cieplne"
+MsgBox sKomentarz & Chr(10) & sKomentarz2, vbInformation, "Wezly cieplne"
+        
+Application.DisplayAlerts = True
+Application.ScreenUpdating = True
+
+End Sub
+Sub subPrzeniesienieRejon2()
+
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+    
+answer = MsgBox("Czy przenosimy dane z zakladki 'Rejon2'?", vbQuestion + vbYesNo, "Wezly cieplne")
+
+If answer = xlNo Then
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    Exit Sub
+End If
+
+last_row_shData = shData.Range("A" & shData.Rows.Count).End(xlUp).Row
+last_row_shRejon2 = shRejon2.Range("A" & shRejon2.Rows.Count).End(xlUp).Row
+
+
+    For i = 2 To last_row_shRejon2
+        If Len(shRejon2.Range("J" & i).Value) <> 0 Then
+                sNrPlatnika = shRejon2.Range("E" & i).Value
+                sKomentarz = "Brakuje platnika o numerze:"
+                On Error Resume Next
+                j = shData.Range("E:E").Find(What:=sNrPlatnika, LookIn:=xlValues, LookAt:=xlWhole).Row
+                    If Err.Number <> 0 Then
+                        sKomentarz2 = sKomentarz2 & Chr(10) & sNrPlatnika
+                        shRejon2.Range("J" & i).Interior.Color = vbRed
+                    Else
+                        shData.Range("J" & j).Value = shRejon2.Range("J" & i).Value
+                        shRejon2.Range("J" & i).Interior.Color = vbGreen
+                    End If
+                On Error GoTo 0
+         End If
+     Next i
+
+MsgBox "Dane przeniesione", vbInformation, "Wezly cieplne"
+MsgBox sKomentarz & Chr(10) & sKomentarz2, vbInformation, "Wezly cieplne"
+        
+Application.DisplayAlerts = True
+Application.ScreenUpdating = True
+
+End Sub
