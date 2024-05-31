@@ -1,0 +1,26 @@
+Sub Combine1()
+    
+    Application.ScreenUpdating = False
+    
+    Set mySht = ActiveSheet
+    lRow = 2: i = 1
+    
+    For Each sht In Sheets
+    
+        If sht.Range("A1").Value = "Document" And sht.Name <> "Makro" Then
+            
+            Application.StatusBar = "Progress: " & Round(i / Sheets.Count * 100, 0) & "%"
+            
+            sht.Range("A2:E" & sht.Range("A1").End(xlDown).Row).Copy
+            mySht.Range("A" & lRow).PasteSpecial
+            lRow = mySht.Range("A1").End(xlDown).Offset(1, 0).Row
+        
+        End If
+        
+        i = i + 1
+        
+    Next sht
+    
+    Application.StatusBar = False
+    
+End Sub
