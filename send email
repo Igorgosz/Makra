@@ -1,0 +1,87 @@
+Sub SendEmails()
+
+Dim ws As Worksheet
+Set ws = ThisWorkbook.Worksheets("Data")
+
+Dim OutApp As Object
+Dim OutMail As Object
+
+
+Dim i As Long
+Dim strEmailCC As String, strEmailTo As String, strEmailSubject As String, strEmailBody As String, strEmailAttachment As String
+Dim blAutoSend As Boolean
+Dim Msg As String, Body2 As String
+Dim strStartFormat As String, strEndFormat As String
+
+
+
+blAutoSend = ws.Range("H1")
+
+strStartFormat = "<p class=""MsoNormal""><span lang=""PL"" style=""color:#1F497D""><o:p>"
+strEndFormat = "</o:p></span></p>"
+
+i = 2
+Do While ws.Cells(i, 1).Value <> ""
+
+    strEmailCC = ws.Cells(i, 2)
+    strEmailTo = ws.Cells(i, 1)
+    strEmailSubject = ws.Cells(i, 3)
+    strEmailBody = strStartFormat & ws.Cells(i, 4) & strEndFormat
+    strEmailAttachment = ws.Cells(i, 5)
+    
+    Set OutApp = CreateObject("Outlook.Application")
+    Set OutMail = OutApp.CreateItem(0)
+    
+    Msg = Msg & strEmailBody & vbCrLf & vbCrLf & vbCrLf
+
+    With OutMail
+        '.SendUsingAccount = "gdmceemeaproduct.im@pg.com"
+        .To = strEmailTo
+        .CC = strEmailCC
+        .BCC = ""
+        .Subject = strEmailSubject
+        '.Body = Msg
+        
+        If strEmailAttachment <> "" Then
+            .Attachments.Add (strEmailAttachment)
+        End If
+        
+        If blAutoSend = True Then
+             .Display
+             Body2 = .HTMLBody
+            .HTMLBody = Msg & Body2
+            .Send
+        Else
+            .Display
+            Body2 = .HTMLBody
+            .HTMLBody = Msg & Body2
+        End If
+   
+    '    Application.Wait (Now + TimeValue("0:00:02"))
+       ' Application.SendKeys "%s"
+        
+        
+    End With
+    
+     Set OutMail = Nothing
+     Set OutApp = Nothing
+     
+     
+i = i + 1
+Loop
+
+
+
+End Sub
+
+
+Sub ChooseAttachment()
+
+Dim strFilePath As String
+
+strFilePath = Application.GetOpenFilename(MultiSelect:=False)
+
+ThisWorkbook.Worksheets("Data").Range("E2") = strFilePath
+
+
+End Sub
